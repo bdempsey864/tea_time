@@ -35,20 +35,51 @@ RSpec.describe 'Subscription Controller' do
       expect(response).to have_http_status(404)
     end
   end
-  #   customer = create(:customer)
-  #   tea = create(:tea)
-  #   subscription_params = { 
-  #     customer_id: customer.id,
-  #     tea_id: tea.id,
-  #     title: tea.title,
-  #     price: 5.35,
-  #     status: 'active',
-  #     frequency: 'monthly'
-  #    }
-  #    headers = {"CONTENT_TYPE" => "application/json"}
-  #    post api_v1_subscriptions_path, headers: headers, params: subscription_params.to_json
-  #    thing = JSON.parse(response.body, symbolize_names: true)
-  #    require "pry"; binding.pry
-  #    expect(response).to be_successful
-  # end
+
+  describe 'create a tea subscription' do
+    it 'subscribes a customer to a tea subscription' do
+      customer = create(:customer)
+      tea = create(:tea)
+      subscription_params = { 
+        subscription: {
+          customer_id: customer.id,
+          tea_id: tea.id,
+          title: tea.title,
+          price: 5.35,
+          status: 'active',
+          frequency: 'monthly'
+       }}
+
+      post "/api/v1/customers/#{customer.id}/subscriptions",
+      params: subscription_params
+
+      expect(response).to be_successful
+    end
+  end
+
+  describe 'canceling a subscription' do
+    it 'cancels a customers subscription' do
+      customer = create(:customer)
+      tea = create(:tea)
+      subscription = create(:subscription, status: 'active', customer_id: customer.id, tea_id: tea.id)
+
+      patch "/api/v1/customers/#{customer.id}/subscriptions/#{subscription.id}", params: {status: 'cancelled'}
+
+      subscription.reload 
+      
+      expect(response).to be_successful
+      expect(subscription.status).to eq('cancelled')
+    end
+
+    it 'returns an error if status is not valid' do
+      customer = create(:customer)
+      tea = create(:tea)
+      subscription = create(:subscription, status: 'active', customer_id: customer.id, tea_id: tea.id)
+
+      patch "/api/v1/customers/#{customer.id}/subscriptions/#{subscription.id}", params: { status: "chicken wings" }
+
+      expect(response).to_not be_successful
+      expect(response).to have_http_status 400
+    end
+  end
 end
