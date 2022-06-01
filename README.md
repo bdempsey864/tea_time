@@ -33,7 +33,6 @@ Testing is done with [RSpec](https://rspec.info/) with coverage details provided
 
 ### Database Design
 
-![database_schema](file:///Users/blakedempsey/Desktop/Screen%20Shot%202022-06-01%20at%206.28.09%20PM.png)
 ![Screen Shot 2022-06-01 at 6 28 09 PM](https://user-images.githubusercontent.com/79022527/171515264-fea0effd-094f-4346-a493-18dc6df70d60.png)
 
 ### Endpoints
